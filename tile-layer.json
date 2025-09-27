@@ -1,0 +1,15 @@
+{
+  "GeoServerLayer": {
+    "name": "demo:global_mining_polygons",
+    "enabled": true,
+    "mimeFormats": ["application/vnd.mapbox-vector-tile"],
+    "gridSubsets": [
+      { "gridSetName": "EPSG:900913" }
+    ],
+    "metaWidthHeight": [4, 4],
+    "parameterFilters": [
+      { "key": "STYLES", "defaultValue": "" }
+    ],
+    "cacheWarningSkips": []
+  }
+}

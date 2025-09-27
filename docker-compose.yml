@@ -1,0 +1,56 @@
+services:
+  postgis:
+    image: postgis/postgis:15-3.3
+    container_name: postgis
+    environment:
+      POSTGRES_DB: gisdb
+      POSTGRES_USER: gis
+      POSTGRES_PASSWORD: gispass
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./postgis_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gis -d gisdb || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  geoserver:
+    image: kartoza/geoserver:2.22.2 ##open source production-ready docker image. Specifically for production and dev use.
+    container_name: geoserver
+    depends_on:
+      postgis:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      GEOSERVER_ADMIN_USER: admin
+      GEOSERVER_ADMIN_PASSWORD: geoserver
+      STABLE_EXTENSIONS: "vectortiles-plugin"
+    volumes:
+      - ./geoserver_data:/opt/geoserver_data  ##local folder for persistent config
+
+    
+  api:
+    build:
+      context: ./gis-api-gateway
+      dockerfile: Dockerfile
+    container_name: api
+    depends_on:
+      geoserver:
+        condition: service_started
+    environment:
+      PORT: 3000
+      GEOSERVER_URL: http://geoserver:8080/geoserver
+      GEOSERVER_USER: admin
+      GEOSERVER_PASSWORD: geoserver
+      WORKSPACE: demo
+      TILE_GRIDSET: EPSG:900913
+      GEOM_COLUMN: geom
+      UPSTREAM_TIMEOUT_MS: 15000
+      STREAM_TIMEOUT_MS: 20000
+      MAX_Z: 24
+    ports:
+      - "3000:3000"
+    restart: unless-stopped

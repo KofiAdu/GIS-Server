@@ -1,0 +1,38 @@
+# OS / IDE
+.DS_Store
+.vscode/
+*.log
+*.pid
+
+# Node-related
+node_modules/
+dist/
+build/
+
+# Vite
+.vite/
+
+# Environment & config
+.env
+.env.*
+*.local
+
+# Docker
+*.sock
+
+# Spatial data
+*.pbf
+*.png
+*.tif
+*.tiff
+*.shp
+*.dbf
+*.prj
+*.shx
+
+# Folders
+postgis_data/
+geoserver_data/
+
+# Misc
+coverage/
